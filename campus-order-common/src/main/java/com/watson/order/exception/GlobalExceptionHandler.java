@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 自定义异常处理方法
-     * @return
+     * @return 异常信息
      */
     @ExceptionHandler(CustomException.class)
     public Result<String> exceptionHandler(CustomException e) {
