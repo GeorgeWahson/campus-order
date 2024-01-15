@@ -12,13 +12,14 @@ import com.watson.order.mapper.CategoryMapper;
 import com.watson.order.po.Category;
 import com.watson.order.po.Dish;
 import com.watson.order.po.Setmeal;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
@@ -44,10 +45,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return new PageBean<>((int) categoryPage.getTotal(), categoryPage.getRecords());
     }
 
+    /*
+        dishServiceImpl 和 categoryServiceImpl 会产生循环依赖
+        1. 改为@Autowired和@Lazy注解去注入bean
+        2. @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+        3. @RequiredArgsConstructor(onConstructor_= {@Lazy}) // 使用懒加载解决
+     */
+    @Autowired
+    @Lazy
+    private DishService dishService;
 
-    private final DishService dishService;
-
-    private final SetmealService setmealService;
+    @Autowired
+    @Lazy
+    private SetmealService setmealService;
 
     /**
      * 根据id删除分类，删除之前需要进行判断
