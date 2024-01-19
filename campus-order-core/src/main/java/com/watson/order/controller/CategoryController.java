@@ -20,6 +20,7 @@ public class CategoryController {
 
     /**
      * 新增分类
+     *
      * @param category 分类
      * @return 结果信息
      */
@@ -32,7 +33,8 @@ public class CategoryController {
 
     /**
      * 分类查询
-     * @param page 页码
+     *
+     * @param page     页码
      * @param pageSize 每页显示数量
      * @param showType 显示类型
      * @return 封装结果dto
@@ -50,6 +52,7 @@ public class CategoryController {
 
     /**
      * 根据id删除分类
+     *
      * @param id 分类id
      * @return 删除结果信息
      */
@@ -65,12 +68,13 @@ public class CategoryController {
 
     /**
      * 根据id修改分类信息
+     *
      * @param category 封装更新后的category对象
      * @return 更新结果信息
      */
     @PutMapping
     public Result<String> update(@RequestBody Category category) {
-        log.info("修改分类信息：{}",category);
+        log.info("修改分类信息：{}", category);
 
         categoryService.updateById(category);
 
@@ -78,9 +82,11 @@ public class CategoryController {
     }
 
     /**
-     * 菜品Dish添加页面，获取【菜品】分类展示到页面下拉框中
+     * 菜品 Dish 添加页面，获取【菜品】分类展示到页面下拉框中
+     * 套餐 SetMeal 添加页面，获取【套餐】分类展示到页面下拉框中
      * request url: localhost:8080/category/list?type=1
-     * @param category 分类 type=1
+     *
+     * @param category 分类 dish type=1, set_meal = 2
      * @return 分类集合包装
      */
     @GetMapping("/list")

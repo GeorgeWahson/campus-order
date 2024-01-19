@@ -19,6 +19,7 @@ public class CommonController {
 
     /**
      * 将前端上传的图片上传到阿里云oss
+     *
      * @param file 图片文件
      * @return 包含图片网址的 封装结果对象
      * @throws IOException 文件io异常

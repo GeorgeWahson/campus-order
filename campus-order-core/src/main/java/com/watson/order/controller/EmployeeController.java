@@ -22,7 +22,8 @@ public class EmployeeController {
 
     /**
      * 员工登录
-     * @param request 网页请求
+     *
+     * @param request  网页请求
      * @param employee 封装登录用户名及密码的用户对象
      * @return 根据用户名及密码查询的用户对象
      */
@@ -53,6 +54,7 @@ public class EmployeeController {
 
     /**
      * 员工点击退出
+     *
      * @param request 前端发出的登出请求
      * @return 登出结果信息
      */
@@ -66,6 +68,7 @@ public class EmployeeController {
 
     /**
      * 新增员工
+     *
      * @param employee 前端填写的用户信息
      * @return 新增结果信息
      */
@@ -89,9 +92,10 @@ public class EmployeeController {
      * 在控制器方法的形参位置，**设置和请求参数同名的形参**，
      * 当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会
      * 将请求参数赋值给相应的形参
-     * @param page 页码
+     *
+     * @param page     页码
      * @param pageSize 每页显示数量
-     * @param name 模糊查询的用户名
+     * @param name     模糊查询的用户名
      * @return 查询结构封装dto
      */
     @GetMapping("/page")
@@ -105,6 +109,7 @@ public class EmployeeController {
 
     /**
      * 根据id修改员工信息
+     *
      * @param employee 更新后的用户对象
      * @return 更新结果信息
      */
@@ -119,13 +124,12 @@ public class EmployeeController {
             if (employee.getStatus() == 0) {
                 // 用户执行了禁用管理员操作
                 return Result.error("不能禁用管理员账户！");
-            } else if ( !"admin".equals(employee.getUsername()) ) {
+            } else if (!"admin".equals(employee.getUsername())) {
                 // 用户修改admin用户名
                 return Result.error("不能修改管理员账号名称！");
             }
         }
-        // 不更新密码
-
+        // 用户编辑界面无法更改密码，md5加密不可逆，修改密码需新建页面，通过输入原密码与数据库加密后密码进行匹配
         // 雪花算法id js对long型精度遗失
         employeeService.updateById(employee);
         return Result.success("员工信息修改成功!");
@@ -133,6 +137,7 @@ public class EmployeeController {
 
     /**
      * 根据id查询员工信息
+     *
      * @param id 用户id
      * @return 被查询的用户对象
      */
@@ -142,12 +147,11 @@ public class EmployeeController {
         Employee empById = employeeService.getById(id);
         log.info("查找id: {}, 结果：{}", id, empById);
 
-        if(empById != null){
+        if (empById != null) {
             return Result.success(empById);
         }
         return Result.error("没有查询到对应员工信息");
     }
-
 
 
 }
