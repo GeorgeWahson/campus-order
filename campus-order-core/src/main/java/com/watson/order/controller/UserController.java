@@ -46,7 +46,7 @@ public class UserController {
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
             log.info("check-code is :{}", code);
             // 邮件发送验证码
-            sendMailUtils.sendSimpleMail(code, email);
+//            sendMailUtils.sendSimpleMail(code, email);
 
             // 将生成的验证码存至session
             session.setAttribute(email, code);  // key value
@@ -62,13 +62,13 @@ public class UserController {
     /**
      * 移动端用户登录
      *
-     * @param map 包含 phone 和 code
+     * @param map 包含 email 和 code
      * @param session 前端会话请求
      * @return 登录结果
      */
     @PostMapping("/login")
     public Result<User> login(@RequestBody Map<String, String> map, HttpSession session) {
-        // TODO 管理端和手机端一个登录，另外一个无需登录（attribute问题，应该已解决）
+
         log.info("map: " + map.toString());
 
         // 获取邮箱地址

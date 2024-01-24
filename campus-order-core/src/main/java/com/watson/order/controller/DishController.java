@@ -149,21 +149,22 @@ public class DishController {
     }
 
     /**
-     * 根据条件查询菜品数据，用于添加套餐时，显示各菜品分类中所拥有的菜品
-     * 传对象通用性高
+     * 根据条件查询菜品数据，使用时机：
+     * <ol>
+     *     <li>用于管理端添加套餐时，增添套餐内不同菜品分类的菜品，默认查询排在第一的菜品分类</li>
+     *     <li>用户端用户查询某一菜品分类内有哪些菜品时，同时包含口味信息，进行选规格操作</li>
+     * </ol>
+     * 显示各菜品分类中所拥有的菜品
+     * <p>传对象通用性高</p>
      *
      * @param dish 封装 菜品 分类id的 dish对象
      * @return 菜品集合 包装类
      */
     @GetMapping("/list")
-    public Result<List<Dish>> list(Dish dish) {
+    public Result<List<DishDto>> list(Dish dish) {
 
-        List<Dish> list = dishService.lambdaQuery()
-                .eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId())
-                .eq(Dish::getStatus, 1)  // 只查起售的菜
-                .orderByAsc(Dish::getSort)
-                .orderByDesc(Dish::getUpdateTime)
-                .list();
+        log.info("dish: {}", dish);
+        List<DishDto> list = dishService.getListWithFlavor(dish);
 
         return Result.success(list);
     }

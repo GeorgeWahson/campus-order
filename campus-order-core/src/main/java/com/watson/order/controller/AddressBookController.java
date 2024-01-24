@@ -105,6 +105,7 @@ public class AddressBookController {
         // SQL:select * from address_book where user_id = ? order by update_time desc
         List<AddressBook> list = addressBookService.lambdaQuery()
                 .eq(null != addressBook.getUserId(), AddressBook::getUserId, addressBook.getUserId())
+                .orderByDesc(AddressBook::getIsDefault)
                 .orderByDesc(AddressBook::getUpdateTime)
                 .list();
 

@@ -1,7 +1,5 @@
 package com.watson.order.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.watson.order.CategoryService;
 import com.watson.order.SetmealService;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
@@ -13,7 +11,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,23 +84,23 @@ public class SetmealController {
     }
 
     /**
-     * 手机端 套餐内
-     * 前端发请求为：<a href="http://localhost:8080/setmeal/list?categoryId=1574026245941882881&status=1">...</a>
+     * 手机端 查询某个套餐分类内的菜品
+     * 前端发请求为：<a href="http://localhost:8080/setmeal/list?categoryId=____&status=1">...</a>
      *
-     * @param setmeal
-     * @return
+     * @param setmeal 包含 categoryId 和 status 的套餐对象
+     * @return 分类下套餐集合
      */
     @GetMapping("/list")
     @Cacheable(value = "setmealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     @ApiOperation(value = "套餐条件查询接口")
     public Result<List<Setmeal>> list(Setmeal setmeal) {
-        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId());
-        // 前端传的status = 1,所以直接写1也行
-        queryWrapper.eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus());
-        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
 
-        List<Setmeal> list = setmealService.list(queryWrapper);
+        log.info("get in setMeal controller, setMeal:{}", setmeal);
+        List<Setmeal> list = setmealService.lambdaQuery()
+                .eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId())
+                .eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus()) // 前端传的status = 1,所以直接写1也行
+                .orderByDesc(Setmeal::getUpdateTime)
+                .list();
 
         return Result.success(list);
     }

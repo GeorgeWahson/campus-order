@@ -82,9 +82,9 @@ public class CategoryController {
     }
 
     /**
-     * 菜品 Dish 添加页面，获取【菜品】分类展示到页面下拉框中
-     * 套餐 SetMeal 添加页面，获取【套餐】分类展示到页面下拉框中
-     * request url: localhost:8080/category/list?type=1
+     * - 菜品 Dish 添加页面，获取【菜品】分类展示到页面下拉框中
+     * - 套餐 SetMeal 添加页面，获取【套餐】分类展示到页面下拉框中
+     * - 用户移动端页面，获取分类，显示到左侧分类栏目
      *
      * @param category 分类 dish type=1, set_meal = 2
      * @return 分类集合包装
