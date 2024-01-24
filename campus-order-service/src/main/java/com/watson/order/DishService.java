@@ -26,4 +26,7 @@ public interface DishService extends IService<Dish> {
 
     // 修改菜品状态
     void changeBatchDishStatusByIds(int dishStatus, List<String> ids);
+
+    // 查询某个菜品分类下，所拥有的的菜品及对应口味数据
+    List<DishDto> getListWithFlavor(Dish dish);
 }

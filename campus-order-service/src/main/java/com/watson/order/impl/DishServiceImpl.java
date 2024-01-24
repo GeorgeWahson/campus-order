@@ -192,5 +192,45 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
                 .update();
     }
 
+    /**
+     * 查询某个菜品分类下，所拥有的的菜品及对应口味数据
+     *
+     * @param dish 封装 菜品 分类id的 dish对象
+     * @return 菜品传输对象dto集合
+     */
+    @Override
+    public List<DishDto> getListWithFlavor(Dish dish) {
+        List<Dish> list = this.lambdaQuery()
+                .eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId())
+                .like(!StringUtils.isEmpty(dish.getName()), Dish::getName, dish.getName())  // 名称查询
+                .eq(Dish::getStatus, 1)  // 只查起售的菜
+                .orderByAsc(Dish::getSort)
+                .orderByDesc(Dish::getUpdateTime)
+                .list();
+
+        // 封装口味数据 和 分类名称
+
+        return list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+
+            Long categoryId = item.getCategoryId();
+            Category category = categoryService.getById(categoryId);
+
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+
+            Long dishId = item.getId();
+            List<DishFlavor> dishFlavorList = dishFlavorService.lambdaQuery()
+                    .eq(DishFlavor::getDishId, dishId).list();
+
+            dishDto.setFlavors(dishFlavorList);
+
+            return dishDto;
+        }).collect(Collectors.toList());
+
+    }
+
 
 }
