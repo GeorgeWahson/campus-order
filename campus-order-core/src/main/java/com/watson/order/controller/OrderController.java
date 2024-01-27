@@ -1,6 +1,8 @@
 package com.watson.order.controller;
 
 import com.watson.order.OrderService;
+import com.watson.order.common.BaseContext;
+import com.watson.order.dto.OrderDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Orders;
@@ -71,5 +73,20 @@ public class OrderController {
         return update ? Result.success("状态修改成功") : Result.error("订单状态修改失败");
     }
 
+    /**
+     * 用户端获取 订单 列表
+     *
+     * @param page     页码
+     * @param pageSize 每页显示数量
+     * @return 封装订单详细信息的数据传输对象
+     */
+    @GetMapping("/userPage")
+    public Result<PageBean<OrderDto>> userPage(int page, int pageSize) {
+
+        Long userId = BaseContext.getCurrentId();
+        PageBean<OrderDto> orderDtoPageBean = orderService.userPage(userId, page, pageSize);
+
+        return Result.success(orderDtoPageBean);
+    }
 
 }

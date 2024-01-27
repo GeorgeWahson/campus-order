@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.watson.order.*;
 import com.watson.order.common.BaseContext;
+import com.watson.order.dto.OrderDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.exception.CustomException;
 import com.watson.order.mapper.OrderMapper;
@@ -134,6 +135,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         PageBean<Orders> ordersPageBean = new PageBean<>((int) ordersPage.getTotal(), ordersPage.getRecords());
         log.info("return ordersPageBean: {}", ordersPageBean);
         return ordersPageBean;
+    }
+
+    /**
+     * 用户端查看订单数据
+     *
+     * @param page     页码
+     * @param pageSize 每页显示数量
+     * @return 包含订单明细的数据传输对象
+     */
+    @Override
+    public PageBean<OrderDto> userPage(Long userId, int page, int pageSize) {
+
+        if (userId == null) {
+            throw new CustomException("用户信息获取失败！");
+        }
+        Page<Orders> ordersPage = this.lambdaQuery().eq(Orders::getUserId, userId)
+                .page(new Page<>(page, pageSize));
+
+        List<OrderDto> orderDtoList = ordersPage.getRecords().stream().map((item) -> {
+            Long orderId = item.getId();
+            List<OrderDetail> orderDetailList = orderDetailService.lambdaQuery().eq(OrderDetail::getOrderId, orderId).list();
+
+            OrderDto orderDto = new OrderDto();
+            BeanUtils.copyProperties(item, orderDto);
+            orderDto.setOrderDetails(orderDetailList);
+
+            return orderDto;
+        }).collect(Collectors.toList());
+
+        return new PageBean<>((int) ordersPage.getTotal(), orderDtoList);
     }
 
 }

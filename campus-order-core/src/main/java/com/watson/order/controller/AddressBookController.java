@@ -111,4 +111,24 @@ public class AddressBookController {
 
         return Result.success(list);
     }
+
+    /**
+     * 修改地址
+     *
+     * @param addressBook 修改后的地址对象
+     * @return 操作结果信息
+     */
+    @PutMapping
+    public Result<String> updateAddress(@RequestBody AddressBook addressBook) {
+
+        log.info("update addressBook: {}", addressBook);
+        boolean b = addressBookService.updateById(addressBook);
+
+//        boolean updated = addressBookService.lambdaUpdate()
+//                .eq(AddressBook::getId, addressBook.getId())
+//                .update(addressBook);
+
+        return b ? Result.success("修改成功") : Result.error("修改失败");
+    }
+
 }

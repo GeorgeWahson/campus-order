@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.UserService;
+import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.User;
 import com.watson.order.utils.SendMailUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -99,5 +101,18 @@ public class UserController {
         return Result.error("验证码错误，登录失败");
     }
 
+    /**
+     * 用户点击退出
+     *
+     * @param request 前端发出的登出请求
+     * @return 登出结果信息
+     */
+    @PostMapping("/logout")
+    public Result<String> logout(HttpServletRequest request) {
+        log.info("用户{}登出。", BaseContext.getCurrentId());
+        // 清除Session中保存的当前登录员工的id
+        request.getSession().removeAttribute("user");
+        return Result.success("退出成功！");
+    }
 
 }

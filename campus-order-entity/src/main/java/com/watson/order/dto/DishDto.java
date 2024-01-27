@@ -3,10 +3,12 @@ package com.watson.order.dto;
 import com.watson.order.po.Dish;
 import com.watson.order.po.DishFlavor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class DishDto extends Dish {
 

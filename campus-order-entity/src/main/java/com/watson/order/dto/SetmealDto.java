@@ -3,9 +3,11 @@ package com.watson.order.dto;
 import com.watson.order.po.Setmeal;
 import com.watson.order.po.SetmealDish;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SetmealDto extends Setmeal {
 

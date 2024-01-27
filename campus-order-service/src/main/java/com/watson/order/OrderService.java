@@ -1,6 +1,7 @@
 package com.watson.order;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.watson.order.dto.OrderDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.po.Orders;
 
@@ -13,4 +14,7 @@ public interface OrderService extends IService<Orders> {
 
     // 管理端查询数据
     PageBean<Orders> page(int page, int pageSize, String number, LocalDateTime beginTime, LocalDateTime endTime);
+
+    // 用户端查看订单数据
+    PageBean<OrderDto> userPage(Long userId, int page, int pageSize);
 }
