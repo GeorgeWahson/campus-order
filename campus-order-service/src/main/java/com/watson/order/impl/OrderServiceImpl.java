@@ -2,9 +2,12 @@ package com.watson.order.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.watson.order.*;
 import com.watson.order.common.BaseContext;
+import com.watson.order.dto.PageBean;
 import com.watson.order.exception.CustomException;
 import com.watson.order.mapper.OrderMapper;
 import com.watson.order.po.*;
@@ -106,6 +109,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         // 清空购物车数据
         shoppingCartService.remove(lqw);
 
+    }
+
+    /**
+     * 管理端查询订单数据
+     *
+     * @param page      页码
+     * @param pageSize  每页显示数量
+     * @param number    订单号 模糊查询
+     * @param beginTime 起始时间
+     * @param endTime   截止时间
+     * @return 订单列表封装数据
+     */
+    @Override
+    public PageBean<Orders> page(int page, int pageSize, String number, LocalDateTime beginTime, LocalDateTime endTime) {
+
+        Page<Orders> ordersPage = this.lambdaQuery().like(StringUtils.isNotEmpty(number), Orders::getNumber, number)
+                .ge(beginTime != null, Orders::getCheckoutTime, beginTime)
+                .le(endTime != null, Orders::getCheckoutTime, endTime)
+                .orderByAsc(Orders::getStatus)
+                .orderByDesc(Orders::getCheckoutTime)
+                .page(new Page<>(page, pageSize));
+
+        PageBean<Orders> ordersPageBean = new PageBean<>((int) ordersPage.getTotal(), ordersPage.getRecords());
+        log.info("return ordersPageBean: {}", ordersPageBean);
+        return ordersPageBean;
     }
 
 }
