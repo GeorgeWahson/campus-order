@@ -7,7 +7,6 @@ import com.watson.order.dto.Result;
 import com.watson.order.po.Dish;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +22,6 @@ public class DishController {
 
     private final DishService dishService;
 
-//    @Autowired
-//    private RedisTemplate redisTemplate;
-
     /**
      * 新增菜品
      *
@@ -37,13 +33,6 @@ public class DishController {
         log.info("dishDto: {}", dishDto.toString());
         dishService.saveWithFlavor(dishDto);
 
-        // 清理所有菜品缓存数据
-//        Set keys = redisTemplate.keys("dish_*");
-//        redisTemplate.delete(keys);
-
-        // 清理某个分类下面的缓存
-//        String key = "dish_" + dishDto.getCategoryId() + "_1";
-//        redisTemplate.delete(key);
         return Result.success("新增菜品成功!");
 
     }
@@ -88,13 +77,6 @@ public class DishController {
     public Result<String> update(@RequestBody DishDto dishDto) {
         log.info("dishDto: {}", dishDto.toString());
         dishService.updateWithFlavor(dishDto);
-        // 清理所有菜品缓存数据
-//        Set keys = redisTemplate.keys("dish_*");
-//        redisTemplate.delete(keys);
-
-        // 清理某个分类下面的缓存
-//        String key = "dish_" + dishDto.getCategoryId() + "_1";
-//        redisTemplate.delete(key);
 
         return Result.success("修改菜品成功!");
     }
@@ -141,10 +123,6 @@ public class DishController {
 
         dishService.changeBatchDishStatusByIds(dishStatus, ids);
 
-//            // 修改状态不走update方法，需要删除缓存
-//            String key = "dish_" + dish.getCategoryId() + "_1";
-//            redisTemplate.delete(key);
-
         return Result.success("修改状态成功!");
     }
 
@@ -163,7 +141,8 @@ public class DishController {
     @GetMapping("/list")
     public Result<List<DishDto>> list(Dish dish) {
 
-        log.info("dish: {}", dish);
+        // log.info("list dish: {}", dish);
+
         List<DishDto> list = dishService.getListWithFlavor(dish);
 
         return Result.success(list);

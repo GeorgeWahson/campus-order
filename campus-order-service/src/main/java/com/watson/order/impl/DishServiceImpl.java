@@ -18,10 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,6 +42,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Autowired
     private AliOSSUtils aliOSSUtils;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 新增菜品，同时保存口味数据
@@ -60,6 +66,16 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // map() can be replaced to peek()
         flavors = flavors.stream().peek((item) -> item.setDishId(dishDtoId))
                 .collect(Collectors.toList());
+
+        // 清理所有菜品缓存数据
+        // Set<String> keys = redisTemplate.keys("dish_*");
+        // if (keys != null) {
+        //     redisTemplate.delete(keys);
+        // }*/
+
+        // 清理该分类下面的缓存
+        String key = "dish_" + dishDto.getCategoryId();
+        redisTemplate.delete(key);
 
         dishFlavorService.saveBatch(flavors);
     }
@@ -135,6 +151,10 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // 更新dish表基本信息(name,price等)
         this.updateById(dishDto);
 
+        // 清理该分类下面的缓存
+        String key = "dish_" + dishDto.getCategoryId();
+        redisTemplate.delete(key);
+
         // 清理当前菜品对应口味数据---dish_flavor表的delete操作
         // 一道菜一个口味是一条数据，一道菜四个口味则在库里有四条数据。更新不能删除原本存在的数据，只能全删再插
         LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
@@ -162,11 +182,13 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         // 对每个id 执行 删除dish表，图片，dish_flavor表操作。
         for (String id : ids) {
-            log.info("delete dish id: {}", id);
-
             Dish dish = this.getById(id);
             // 根据图片网址，删除图片
             aliOSSUtils.delete(dish.getImage());
+
+            // 清理该分类下面的缓存
+            String key = "dish_" + dish.getCategoryId();
+            redisTemplate.delete(key);
 
             // 删除 dish_flavor 表对应数据
             LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
@@ -190,6 +212,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
                 .in(Dish::getId, ids)
                 .set(Dish::getStatus, dishStatus)
                 .update();
+
+        // 修改状态不走update方法，需要删除缓存，直接删除全部缓存
+        Set<String> keys = redisTemplate.keys("dish_*");
+        if (keys != null) {
+            redisTemplate.delete(keys);
+        }
     }
 
     /**
@@ -200,6 +228,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      */
     @Override
     public List<DishDto> getListWithFlavor(Dish dish) {
+
+        List<DishDto> ret;
+
+        // 根据 分类 构造 key， value:（每个分类下的菜品）
+        String key = "dish_" + dish.getCategoryId();
+        // 先从redis获取数据，
+        ret = (List<DishDto>) redisTemplate.opsForValue().get(key);
+
+        if (ret != null) {
+            // 有则直接返回，无需查询数据库。
+            return ret;
+        }
+        // 不存在，查询数据库
         List<Dish> list = this.lambdaQuery()
                 .eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId())
                 .like(!StringUtils.isEmpty(dish.getName()), Dish::getName, dish.getName())  // 名称查询
@@ -210,7 +251,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         // 封装口味数据 和 分类名称
 
-        return list.stream().map((item) -> {
+        ret = list.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
 
@@ -229,6 +270,11 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
             return dishDto;
         }).collect(Collectors.toList());
+
+        // 存到缓存，有效期60min
+        redisTemplate.opsForValue().set(key, ret, 60, TimeUnit.MINUTES);
+
+        return ret;
 
     }
 

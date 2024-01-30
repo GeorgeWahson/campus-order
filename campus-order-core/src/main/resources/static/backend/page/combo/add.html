@@ -310,14 +310,14 @@
                 size="small"
                 clearable
         >
-            <i slot="prefix" class="el-input__icon el-icon-search" style="cursor: pointer" @click="seachHandle"></i>
+            <i slot="prefix" class="el-input__icon el-icon-search" style="cursor: pointer" @click="searchHandle"></i>
         </el-input>
-        <!-- <AddDish ref="adddish" :check-list="checkList" :seach-key="seachKey" @checkList="getCheckList" /> -->
+        <!-- <AddDish ref="adddish" :check-list="checkList" :seach-key="searchKey" @checkList="getCheckList" /> -->
 
         <div class="addDishCon">
             <div class="leftCont">
                 <div
-                        v-show="seachKey.trim() == ''"
+                        v-show="searchKey.trim() == ''"
                         class="tabBut"
                 >
               <span
@@ -409,7 +409,7 @@
                 actionType: '',
                 value: '',
                 setMealList: [],
-                seachKey: '',
+                searchKey: '',
                 dishList: [],
                 imageUrl: '',
                 actionType: '',
@@ -475,11 +475,11 @@
             },
         },
         watch: {
-            seachKey(value) {
+            searchKey(value) {
                 if (value.trim()) {
                     this.getDishTypeList()
                     this.getDishList(this.indexCategoryId)
-                    // this.getDishForName(this.seachKey)
+                    // this.getDishForName(this.searchKey)
                 }
             },
             checkList(value) {
@@ -516,8 +516,8 @@
                     }
                 })
             },
-            seachHandle() {
-                this.seachKey = this.value
+            searchHandle() {
+                this.searchKey = this.value
                 this.getDishTypeList()
                 this.getDishList(this.indexCategoryId)
             },
@@ -544,7 +544,7 @@
 
             // 添加菜品
             openAddDish() {
-                this.seachKey = ''
+                this.searchKey = ''
                 this.dialogVisible = true
                 //搜索条件清空，菜品重新查询，菜品类别选第一个重新查询
                 this.value = ''
@@ -591,7 +591,7 @@
                             return
                         }
                         // delete prams.dishList
-                        if (this.actionType == 'add') {
+                        if (this.actionType === 'add') {
                             delete prams.id
                             addSetmeal(prams)
                                 .then((res) => {
@@ -712,8 +712,15 @@
             getDishList(id) {
                 console.log('getDishList')
                 console.log(id)
-                console.log(this.seachKey)
-                queryDishList({categoryId: id, name: this.seachKey}).then(res => {
+                let params = {}
+                if (this.searchKey === '') {
+                    params = {categoryId: id}
+                } else {
+                    params = {categoryId: id, name: this.searchKey}
+                }
+                console.log(params)
+                console.log(typeof params)
+                queryDishList(params).then(res => {
                     if (res.code === 1) {
                         if (res.data.length === 0) {
                             this.dishAddList = []
