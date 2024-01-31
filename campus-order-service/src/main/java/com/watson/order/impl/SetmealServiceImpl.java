@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +42,28 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
 
     /**
+     * 查询某个套餐分类内的菜品
+     *
+     * @param setmeal 包含 categoryId 和 status 的套餐对象
+     * @return 分类下套餐集合
+     */
+    @Override
+    @Cacheable(value = "setMealCache", key = "'setMeal_CategoryId_' + #setmeal.categoryId")
+    public List<Setmeal> getList(Setmeal setmeal) {
+        return this.lambdaQuery()
+                .eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId())
+                .eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus()) // 前端传的status = 1,所以直接写1也行
+                .orderByDesc(Setmeal::getUpdateTime)
+                .list();
+    }
+
+    /**
      * 新增套餐，同时保存套餐和菜品关联信息
      *
      * @param setmealDto 封装前端 套餐信息
      */
     @Override
+    @CacheEvict(value = "setMealCache", key = "'setMeal_CategoryId_' + #setmealDto.categoryId") // 删除 新增套餐的分类下的缓存
     @Transactional
     public void saveWithDish(SetmealDto setmealDto) {
         // 保存套餐的基本信息，操作set_meal,执行 insert 操作
@@ -101,6 +120,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
      * @param ids 套餐 id 集合
      */
     @Override
+    @CacheEvict(value = "setMealCache", allEntries = true) // 删除 setMealCache 下所有套餐缓存
     @Transactional
     public void removeWithDish(List<Long> ids) {
         // 未停售套餐不可删除
@@ -162,6 +182,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
      * @param setmealDto 前端传输的 套餐与菜品 传输对象
      */
     @Override
+    @CacheEvict(value = "setMealCache", allEntries = true) // 删除 setMealCache 下所有套餐缓存。（可能存在套餐换分类的情况）
     @Transactional
     public void updateWithDish(SetmealDto setmealDto) {
 
@@ -192,6 +213,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
      * @param ids           需要转换的 id 集合
      */
     @Override
+    @CacheEvict(value = "setMealCache", allEntries = true) // 删除 setMealCache 下所有套餐缓存。
     public void statusHandle(int setmealStatus, List<String> ids) {
         this.lambdaUpdate()
                 .in(Setmeal::getId, ids)

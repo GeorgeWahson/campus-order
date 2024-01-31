@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface SetmealService extends IService<Setmeal> {
 
+    // 查询某个套餐分类内的菜品
+    List<Setmeal> getList(Setmeal setmeal);
+
     // 新增套餐，同时保存套餐和菜品关联信息
     void saveWithDish(SetmealDto setmealDto);
 

@@ -36,7 +36,6 @@ public class SetmealController {
      * @return 新增结果信息
      */
     @PostMapping
-//    @CacheEvict(value = "setmealCache", allEntries = true)
     @ApiOperation(value = "新增套餐接口")
     public Result<String> save(@RequestBody SetmealDto setmealDto) {
         log.info("新增套餐信息：{}", setmealDto);
@@ -75,7 +74,6 @@ public class SetmealController {
      * @return 操作结果信息
      */
     @DeleteMapping
-//    @CacheEvict(value = "setmealCache", allEntries = true)
     @ApiOperation(value = "套餐删除接口")
     public Result<String> delete(@RequestParam List<Long> ids) {
         log.info("ids：{}", ids);
@@ -91,16 +89,11 @@ public class SetmealController {
      * @return 分类下套餐集合
      */
     @GetMapping("/list")
-    @Cacheable(value = "setmealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     @ApiOperation(value = "套餐条件查询接口")
     public Result<List<Setmeal>> list(Setmeal setmeal) {
 
         log.info("get in setMeal controller, setMeal:{}", setmeal);
-        List<Setmeal> list = setmealService.lambdaQuery()
-                .eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId())
-                .eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus()) // 前端传的status = 1,所以直接写1也行
-                .orderByDesc(Setmeal::getUpdateTime)
-                .list();
+        List<Setmeal> list = setmealService.getList(setmeal);
 
         return Result.success(list);
     }

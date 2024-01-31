@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /*
@@ -75,4 +78,31 @@ public class RedisConfig {
 
         return template;
     }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration(CacheProperties cacheProperties) {
+
+        CacheProperties.Redis redisProperties = cacheProperties.getRedis();
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
+
+        // 序列化值
+        config = config.serializeValuesWith(RedisSerializationContext.SerializationPair
+                .fromSerializer(genericJackson2JsonRedisSerializer()));
+
+        if (redisProperties.getTimeToLive() != null) {
+            config = config.entryTtl(redisProperties.getTimeToLive());
+        }
+        if (redisProperties.getKeyPrefix() != null) {
+            config = config.prefixKeysWith(redisProperties.getKeyPrefix());
+        }
+        if (!redisProperties.isCacheNullValues()) {
+            config = config.disableCachingNullValues();
+        }
+        if (!redisProperties.isUseKeyPrefix()) {
+            config = config.disableKeyPrefix();
+        }
+
+        return config;
+    }
+
 }
