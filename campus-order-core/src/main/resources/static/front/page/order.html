@@ -124,7 +124,7 @@
                         })
                     }
                     this.loading = false;
-                    if (this.paging.page >= res.data.pages) {
+                    if (this.paging.page >= res.data.total) {
                         this.finished = true;
                     }
                     this.paging.page = this.paging.page + 1
