@@ -50,7 +50,7 @@ public class UserController {
             log.info("check-code is :{}", code);
 
             // 邮件发送验证码
-             sendMailUtils.sendSimpleMail(code, email);
+            // sendMailUtils.sendSimpleMail(code, email);
 
             // 将生成的验证码存至session
             // session.setAttribute(email, code);  // key value
