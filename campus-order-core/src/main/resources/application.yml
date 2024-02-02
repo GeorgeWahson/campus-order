@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: Campus-Order
+  profiles:
+    active: dev
+  main:
+    banner-mode: off
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB
+  mail:
+    # 配置发邮平台，若为qq，则163换qq
+    host: smtp.163.com
+    username: ${MAIL_USER}    # 发邮件邮箱
+    password: ${MAIL_SECRET}  # 非登录密码，为邮箱设置里的协议密码
+    # 推荐配置
+    port: 465
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    default-encoding: UTF-8
+  # 配置 redis
+  redis:
+    host: 8.134.248.187
+    port: 6379
+    password: ${PROJECT_DB_SECRET}
+    database: 0
+  # 配置缓存数据过期时间
+  cache:
+    redis:
+      time-to-live: 1800000 # 30min
+
+mybatis-plus:
+  configuration:
+    # 在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+    banner: off
