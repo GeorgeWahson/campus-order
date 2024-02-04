@@ -5,6 +5,10 @@ import com.watson.order.dto.DishDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Dish;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dish")
+@Api(tags = "菜品相关接口")
 public class DishController {
 
     private final DishService dishService;
@@ -29,6 +34,7 @@ public class DishController {
      * @return 新增结构信息
      */
     @PostMapping
+    @ApiOperation(value = "新增菜品接口")
     public Result<String> save(@RequestBody DishDto dishDto) {
         log.info("dishDto: {}", dishDto.toString());
         dishService.saveWithFlavor(dishDto);
@@ -46,6 +52,12 @@ public class DishController {
      * @return DishDto数据传输对象
      */
     @GetMapping("/page")
+    @ApiOperation(value = "菜品分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "name", value = "菜品名称", dataTypeClass = String.class)
+    })
     public Result<PageBean<DishDto>> page(int page, int pageSize, String name) {
 
         PageBean<DishDto> dishDtoPageBean = dishService.page(page, pageSize, name);
@@ -60,6 +72,7 @@ public class DishController {
      * @return 菜品数据传输对象 的包装类
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "查询菜品信息接口")
     public Result<DishDto> get(@PathVariable Long id) {
         log.info("get id of category: {}", id);
         DishDto dishDto = dishService.getByIdWithFlavor(id);
@@ -74,6 +87,7 @@ public class DishController {
      * @return 操作结果信息
      */
     @PutMapping
+    @ApiOperation(value = "查询菜品信息接口")
     public Result<String> update(@RequestBody DishDto dishDto) {
         log.info("dishDto: {}", dishDto.toString());
         dishService.updateWithFlavor(dishDto);
@@ -89,6 +103,7 @@ public class DishController {
      * @return 删除结果
      */
     @DeleteMapping
+    @ApiOperation(value = "删除菜品接口")
     public Result<String> deleteDish(@RequestBody List<String> ids) {
 
         log.info("delete dish, ids: {}", ids);
@@ -118,6 +133,7 @@ public class DishController {
      * @return 操作结果信息
      */
     @DeleteMapping("/status/{dishStatus}")
+    @ApiOperation(value = "修改菜品状态接口")
     public Result<String> statusHandle(@PathVariable("dishStatus") int dishStatus, @RequestBody List<String> ids) {
         log.info("ids: {}, dishStatus: {} ", ids, dishStatus);
 
@@ -139,9 +155,10 @@ public class DishController {
      * @return 菜品集合 包装类
      */
     @GetMapping("/list")
+    @ApiOperation(value = "查询菜品集合接口")
     public Result<List<DishDto>> list(Dish dish) {
 
-        // log.info("list dish: {}", dish);
+        log.info("list dish: {}", dish);
 
         List<DishDto> list = dishService.getListWithFlavor(dish);
 

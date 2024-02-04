@@ -6,6 +6,10 @@ import com.watson.order.dto.OrderDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Orders;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +21,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/order")
+@Api(tags = "订单相关接口")
 public class OrderController {
 
     private final OrderService orderService;
@@ -28,6 +33,7 @@ public class OrderController {
      * @return 操作结果
      */
     @PostMapping("/submit")
+    @ApiOperation(value = "用户下单接口")
     public Result<String> submit(@RequestBody Orders orders) {
         log.info("订单数据：{}", orders);
 
@@ -46,6 +52,14 @@ public class OrderController {
      * @return 订单列表封装数据
      */
     @GetMapping("/page")
+    @ApiOperation(value = "管理端订单分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "number", value = "订单号", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "beginTime", value = "起始时间", dataTypeClass = LocalDateTime.class),
+            @ApiImplicitParam(name = "endTime", value = "截止时间", dataTypeClass = LocalDateTime.class)
+    })
     public Result<PageBean<Orders>> page(int page, int pageSize, String number,
                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime beginTime,
                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
@@ -62,6 +76,7 @@ public class OrderController {
      * @return 操作结果信息
      */
     @PutMapping
+    @ApiOperation(value = "修改订单状态接口")
     public Result<String> changeStatus(@RequestBody Orders orders) {
         log.info("orders: {}", orders);
 
@@ -81,6 +96,11 @@ public class OrderController {
      * @return 封装订单详细信息的数据传输对象
      */
     @GetMapping("/userPage")
+    @ApiOperation(value = "用户端订单分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true)
+    })
     public Result<PageBean<OrderDto>> userPage(int page, int pageSize) {
 
         Long userId = BaseContext.getCurrentId();

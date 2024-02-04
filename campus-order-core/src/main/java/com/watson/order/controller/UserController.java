@@ -6,6 +6,8 @@ import com.watson.order.dto.Result;
 import com.watson.order.po.User;
 import com.watson.order.utils.SendMailUtils;
 import com.watson.order.utils.ValidateCodeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Api(tags = "分类相关接口")
 public class UserController {
 
     private final UserService userService;
@@ -40,8 +43,9 @@ public class UserController {
      * @return 发送验证码结果
      */
     @PostMapping("/sendMsg")
+    @ApiOperation(value = "发送登录验证码接口")
     public Result<String> sendMsg(@RequestBody User user, HttpSession session) {
-        // 获取手机号
+        // 获取邮箱
         String email = user.getEmail();
         if (StringUtils.isNotEmpty(email)) {
             log.info("email: {}", email);
@@ -71,6 +75,7 @@ public class UserController {
      * @return 登录结果
      */
     @PostMapping("/login")
+    @ApiOperation(value = "用户登录接口")
     public Result<User> login(@RequestBody Map<String, String> map, HttpSession session) {
 
         log.info("map: " + map.toString());
@@ -110,6 +115,7 @@ public class UserController {
      * @return 登出结果信息
      */
     @PostMapping("/logout")
+    @ApiOperation(value = "用户登出接口")
     public Result<String> logout(HttpServletRequest request) {
         log.info("用户{}登出。", BaseContext.getCurrentId());
         // 清除Session中保存的当前登录员工的id

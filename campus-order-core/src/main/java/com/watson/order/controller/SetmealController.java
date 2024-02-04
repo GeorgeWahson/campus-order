@@ -54,10 +54,9 @@ public class SetmealController {
     @GetMapping("/page")
     @ApiOperation(value = "套餐分页查询接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页记录数", required = true),
-            @ApiImplicitParam(name = "name", value = "套餐名称", required = false)
-    })
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "name", value = "套餐名称", dataTypeClass = String.class)})
     public Result<PageBean<SetmealDto>> page(int page, int pageSize, String name) {
 
         PageBean<SetmealDto> setmealDtoPageBean = setmealService.page(page, pageSize, name);
@@ -119,7 +118,7 @@ public class SetmealController {
      * @return 操作结果信息
      */
     @PutMapping
-//    @CacheEvict(value = "setmealCache", allEntries = true)
+    @ApiOperation(value = "更新套餐接口")
     public Result<String> update(@RequestBody SetmealDto setmealDto) {
         log.info("update setMealDto: {}", setmealDto.toString());
         setmealService.updateWithDish(setmealDto);
@@ -136,6 +135,11 @@ public class SetmealController {
      * @return 操作结果信息
      */
     @DeleteMapping("/status/{setmealStatus}")
+    @ApiOperation(value = "修改套餐状态接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "setmealStatus", value = "修改后的套餐状态", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "ids", value = "套餐id集合", dataTypeClass = List.class, required = true)
+    })
     public Result<String> statusHandle(@PathVariable("setmealStatus") int setmealStatus, @RequestBody List<String> ids) {
         log.info("change status to: {}, ids: {}", setmealStatus, ids);
         setmealService.statusHandle(setmealStatus, ids);

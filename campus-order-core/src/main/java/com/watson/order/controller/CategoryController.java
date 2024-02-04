@@ -4,6 +4,10 @@ import com.watson.order.CategoryService;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Category;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor  // 必备的构造函数，注入 categoryService
 @RequestMapping("/category")
+@Api(tags = "分类相关接口")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -25,6 +30,7 @@ public class CategoryController {
      * @return 结果信息
      */
     @PostMapping
+    @ApiOperation(value = "新增分类接口")
     public Result<String> save(@RequestBody Category category) {
         log.info("category: {}", category);
         categoryService.save(category);
@@ -40,6 +46,12 @@ public class CategoryController {
      * @return 封装结果dto
      */
     @GetMapping("/page")
+    @ApiOperation(value = "分类分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "showType", value = "分类类型", dataTypeClass = String.class)
+    })
     public Result<PageBean<Category>> page(int page, int pageSize, String showType) {
 
         log.info("category page: {}, pageSize: {}, showType: {}", page, pageSize, showType);
@@ -57,6 +69,7 @@ public class CategoryController {
      * @return 删除结果信息
      */
     @DeleteMapping
+    @ApiOperation(value = "删除分类接口")
     public Result<String> delete(@RequestParam("ids") Long id) {
         log.info("删除分类，id为：{}", id);
 
@@ -73,6 +86,7 @@ public class CategoryController {
      * @return 更新结果信息
      */
     @PutMapping
+    @ApiOperation(value = "更新分类接口")
     public Result<String> update(@RequestBody Category category) {
         log.info("修改分类信息：{}", category);
 
@@ -90,6 +104,7 @@ public class CategoryController {
      * @return 分类集合包装
      */
     @GetMapping("/list")
+    @ApiOperation(value = "获取分类集合接口")
     public Result<List<Category>> list(Category category) {
 
         List<Category> list = categoryService.lambdaQuery()

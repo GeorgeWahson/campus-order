@@ -5,6 +5,10 @@ import com.watson.order.common.BaseContext;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Employee;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
@@ -16,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequiredArgsConstructor  // 必备的构造函数，注入 employeeService
 @RequestMapping("/employee")
+@Api(tags = "员工相关接口")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -28,6 +33,7 @@ public class EmployeeController {
      * @return 根据用户名及密码查询的用户对象
      */
     @PostMapping("/login")
+    @ApiOperation(value = "登录接口")
     public Result<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
 
         log.info("in controller");
@@ -59,6 +65,7 @@ public class EmployeeController {
      * @return 登出结果信息
      */
     @PostMapping("/logout")
+    @ApiOperation(value = "登出接口")
     public Result<String> logout(HttpServletRequest request) {
         log.info("用户{}登出。", BaseContext.getCurrentId());
         // 清除Session中保存的当前登录员工的id
@@ -73,6 +80,7 @@ public class EmployeeController {
      * @return 新增结果信息
      */
     @PostMapping
+    @ApiOperation(value = "新增员工接口")
     public Result<String> save(@RequestBody Employee employee) {
         log.info("新增员工，员工信息：{}", employee.toString());
         // 设置初始密码123456，需要进行md5加密处理
@@ -99,6 +107,12 @@ public class EmployeeController {
      * @return 查询结构封装dto
      */
     @GetMapping("/page")
+    @ApiOperation(value = "员工分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页记录数", dataTypeClass = int.class, required = true),
+            @ApiImplicitParam(name = "name", value = "姓名", dataTypeClass = String.class)
+    })
     public Result<PageBean<Employee>> page(int page, int pageSize, String name) {
         log.info("employee page: {}, pageSize: {}, name: {}", page, pageSize, name);
 
@@ -114,6 +128,7 @@ public class EmployeeController {
      * @return 更新结果信息
      */
     @PutMapping
+    @ApiOperation(value = "更新员工接口")
     public Result<String> update(@RequestBody Employee employee) {
         log.info(employee.toString());
         log.info("线程id为：{}", Thread.currentThread().getId());
@@ -142,6 +157,7 @@ public class EmployeeController {
      * @return 被查询的用户对象
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "查询员工接口")
     public Result<Employee> getById(@PathVariable Long id) {
         log.info("根据id查询员工信息...");
         Employee empById = employeeService.getById(id);

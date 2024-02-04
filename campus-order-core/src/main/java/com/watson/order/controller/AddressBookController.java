@@ -4,6 +4,8 @@ import com.watson.order.AddressBookService;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.AddressBook;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/addressBook")
 @RequiredArgsConstructor
+@Api(tags = "地址簿相关接口")
 public class AddressBookController {
 
     private final AddressBookService addressBookService;
@@ -28,6 +31,7 @@ public class AddressBookController {
      * @return 该对象的统一结果封装对象
      */
     @PostMapping
+    @ApiOperation(value = "新增地址接口")
     public Result<AddressBook> save(@RequestBody AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId()); // 设置当前用户的id
         log.info("controller save addressBook:{}", addressBook);
@@ -42,6 +46,7 @@ public class AddressBookController {
      * @return 该对象的统一结果封装对象
      */
     @PutMapping("default")
+    @ApiOperation(value = "设置默认地址接口")
     public Result<AddressBook> setDefault(@RequestBody AddressBook addressBook) {
         log.info("set Default addressBook:{}", addressBook);
 
@@ -58,6 +63,7 @@ public class AddressBookController {
      * @return 统一结果封装对象
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "获取指定地址接口")
     public Result<AddressBook> get(@PathVariable Long id) {
         log.info("get address by Address id: {}", id);
         AddressBook addressBook = addressBookService.getById(id);
@@ -75,6 +81,7 @@ public class AddressBookController {
      * @return 包含默认地址的 统一结果封装对象
      */
     @GetMapping("default")
+    @ApiOperation(value = "获取默认地址接口")
     public Result<AddressBook> getDefault() {
 
         // SQL:select * from address_book where user_id = ? and is_default = 1
@@ -98,6 +105,7 @@ public class AddressBookController {
      * @return 用户地址集合，统一封装对象
      */
     @GetMapping("/list")
+    @ApiOperation(value = "查询用户地址接口")
     public Result<List<AddressBook>> list(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}", addressBook);
@@ -119,6 +127,7 @@ public class AddressBookController {
      * @return 操作结果信息
      */
     @PutMapping
+    @ApiOperation(value = "更新地址接口")
     public Result<String> updateAddress(@RequestBody AddressBook addressBook) {
 
         log.info("update addressBook: {}", addressBook);

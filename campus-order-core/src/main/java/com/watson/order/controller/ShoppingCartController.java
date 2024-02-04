@@ -5,6 +5,8 @@ import com.watson.order.ShoppingCartService;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.ShoppingCart;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/shoppingCart")
+@Api(tags = "购物车相关接口")
 public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
@@ -26,6 +29,7 @@ public class ShoppingCartController {
      * @return 查询后的购物车数据
      */
     @PostMapping("/add")
+    @ApiOperation(value = "购物车添加商品接口")
     public Result<ShoppingCart> add(@RequestBody ShoppingCart shoppingCart) {
 
         log.info("add shopping cart: {}", shoppingCart);
@@ -47,6 +51,7 @@ public class ShoppingCartController {
      * @return 用户购物车数据
      */
     @GetMapping("/list")
+    @ApiOperation(value = "购物车查询接口")
     public Result<List<ShoppingCart>> list() {
         log.info("查看购物车。。。");
         // 查询当前用户的购物车数据
@@ -64,6 +69,7 @@ public class ShoppingCartController {
      * @return 操作结果信息
      */
     @DeleteMapping("/clean")
+    @ApiOperation(value = "清空购物车接口")
     public Result<String> clean() {
         LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
         lqw.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
@@ -79,6 +85,7 @@ public class ShoppingCartController {
      * @return 删除后的购物车商品数据
      */
     @PostMapping("/sub")
+    @ApiOperation(value = "购物车减少商品接口")
     public Result<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart) {
 
         log.info("sub shopping cart: {}", shoppingCart);

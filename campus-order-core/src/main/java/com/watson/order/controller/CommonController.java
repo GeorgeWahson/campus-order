@@ -3,6 +3,8 @@ package com.watson.order.controller;
 import com.watson.order.dto.Result;
 import com.watson.order.exception.CustomException;
 import com.watson.order.utils.AliOSSUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/common")
+@Api(tags = "图片相关接口")
 public class CommonController {
 
     private final AliOSSUtils aliOSSUtils;
@@ -23,6 +26,7 @@ public class CommonController {
      * @return 包含图片网址的 封装结果对象
      */
     @PostMapping("/upload")
+    @ApiOperation(value = "上传图片接口")
     public Result<String> upload(MultipartFile file) {
 
         log.info("upload original file name is: \"{}\"", file.getOriginalFilename());
@@ -42,6 +46,7 @@ public class CommonController {
      * @param url 被删除图片的网址
      */
     @DeleteMapping
+    @ApiOperation(value = "删除图片接口")
     public void delete(String url) {
 
         try {
