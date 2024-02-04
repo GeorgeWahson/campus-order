@@ -1,6 +1,7 @@
 package com.watson.order.interceptor;
 
 import com.alibaba.fastjson2.JSON;
+import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -121,11 +122,21 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
                 writeNotLoginResponse(response);
                 return false;
             }
+            // 设置用户id
+            log.info("用户已登录，用户id:{}", request.getSession().getAttribute("employee"));
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
+            log.info("线程id为：{}", Thread.currentThread().getId());
         } else if (isMobile(userAgent)) {
             if (isUserNotLogin(request, "user")) {
                 writeNotLoginResponse(response);
                 return false;
             }
+            // 设置用户id
+            log.info("用户已登录，用户id:{}", request.getSession().getAttribute("user"));
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
+            log.info("线程id为：{}", Thread.currentThread().getId());
         }
 
         return true;
