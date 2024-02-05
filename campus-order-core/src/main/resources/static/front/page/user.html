@@ -26,7 +26,8 @@
             <img src="./../images/headPage.png"/>
             <div class="desc">
                 <div class="divName">郑華生 <img src="./../images/women.png"/></div>
-                <div class="divPhone">{{userPhone}}</div>
+<!--                <div class="divPhone">{{userPhone}}</div>-->
+                <div class="divEmail">{{userEmail}}</div>
             </div>
         </div>
     </div>
@@ -107,7 +108,8 @@
         },
         computed: {},
         created() {
-            this.userPhone = sessionStorage.getItem("userPhone")
+            // this.userPhone = sessionStorage.getItem("userPhone")
+            this.userEmail = sessionStorage.getItem("userEmail")
             this.initData()
         },
         mounted() {
