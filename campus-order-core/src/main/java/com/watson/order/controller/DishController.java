@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.DishService;
+import com.watson.order.aop.EmpLog;
 import com.watson.order.dto.DishDto;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
@@ -33,6 +34,7 @@ public class DishController {
      * @param dishDto 封装前端 数据传输对象
      * @return 新增结构信息
      */
+    @EmpLog
     @PostMapping
     @ApiOperation(value = "新增菜品接口")
     public Result<String> save(@RequestBody DishDto dishDto) {
@@ -86,8 +88,9 @@ public class DishController {
      * @param dishDto 修改后的 dish 数据传输对象
      * @return 操作结果信息
      */
+    @EmpLog
     @PutMapping
-    @ApiOperation(value = "查询菜品信息接口")
+    @ApiOperation(value = "更新菜品信息接口")
     public Result<String> update(@RequestBody DishDto dishDto) {
         log.info("dishDto: {}", dishDto.toString());
         dishService.updateWithFlavor(dishDto);
@@ -102,6 +105,7 @@ public class DishController {
      * @param ids 菜品id结合
      * @return 删除结果
      */
+    @EmpLog
     @DeleteMapping
     @ApiOperation(value = "删除菜品接口")
     public Result<String> deleteDish(@RequestBody List<String> ids) {
@@ -132,6 +136,7 @@ public class DishController {
      * @param ids        需要转换的ids集合
      * @return 操作结果信息
      */
+    @EmpLog
     @DeleteMapping("/status/{dishStatus}")
     @ApiOperation(value = "修改菜品状态接口")
     public Result<String> statusHandle(@PathVariable("dishStatus") int dishStatus, @RequestBody List<String> ids) {

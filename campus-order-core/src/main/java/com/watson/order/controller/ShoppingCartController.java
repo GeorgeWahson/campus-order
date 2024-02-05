@@ -2,6 +2,7 @@ package com.watson.order.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.watson.order.ShoppingCartService;
+import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.ShoppingCart;
@@ -28,6 +29,7 @@ public class ShoppingCartController {
      * @param shoppingCart 封装 用户添加的菜品 信息
      * @return 查询后的购物车数据
      */
+    @UserLog
     @PostMapping("/add")
     @ApiOperation(value = "购物车添加商品接口")
     public Result<ShoppingCart> add(@RequestBody ShoppingCart shoppingCart) {
@@ -68,6 +70,7 @@ public class ShoppingCartController {
      *
      * @return 操作结果信息
      */
+    @UserLog
     @DeleteMapping("/clean")
     @ApiOperation(value = "清空购物车接口")
     public Result<String> clean() {
@@ -84,6 +87,7 @@ public class ShoppingCartController {
      * @param shoppingCart 封装 用户删除的菜品 信息
      * @return 删除后的购物车商品数据
      */
+    @UserLog
     @PostMapping("/sub")
     @ApiOperation(value = "购物车减少商品接口")
     public Result<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart) {

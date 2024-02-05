@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.UserService;
+import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.User;
@@ -42,6 +43,7 @@ public class UserController {
      * @param session 前端会话请求
      * @return 发送验证码结果
      */
+    @UserLog
     @PostMapping("/sendMsg")
     @ApiOperation(value = "发送登录验证码接口")
     public Result<String> sendMsg(@RequestBody User user, HttpSession session) {
@@ -74,6 +76,7 @@ public class UserController {
      * @param session 前端会话请求
      * @return 登录结果
      */
+    @UserLog
     @PostMapping("/login")
     @ApiOperation(value = "用户登录接口")
     public Result<User> login(@RequestBody Map<String, String> map, HttpSession session) {
@@ -103,6 +106,7 @@ public class UserController {
             // 如果用户登录成功，直接删除缓存中的验证码
             redisTemplate.delete(email);
 
+            BaseContext.setCurrentId(user.getId());
             return Result.success(user);
         }
         return Result.error("验证码错误，登录失败");
@@ -114,12 +118,15 @@ public class UserController {
      * @param request 前端发出的登出请求
      * @return 登出结果信息
      */
+    @UserLog
     @PostMapping("/logout")
     @ApiOperation(value = "用户登出接口")
     public Result<String> logout(HttpServletRequest request) {
         log.info("用户{}登出。", BaseContext.getCurrentId());
         // 清除Session中保存的当前登录员工的id
         request.getSession().removeAttribute("user");
+        // 清除后端存储的用户id
+        BaseContext.clearCurrentId();
         return Result.success("退出成功！");
     }
 

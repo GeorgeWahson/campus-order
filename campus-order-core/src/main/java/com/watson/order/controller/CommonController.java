@@ -1,5 +1,6 @@
 package com.watson.order.controller;
 
+import com.watson.order.aop.EmpLog;
 import com.watson.order.dto.Result;
 import com.watson.order.exception.CustomException;
 import com.watson.order.utils.AliOSSUtils;
@@ -25,6 +26,7 @@ public class CommonController {
      * @param file 图片文件
      * @return 包含图片网址的 封装结果对象
      */
+    @EmpLog
     @PostMapping("/upload")
     @ApiOperation(value = "上传图片接口")
     public Result<String> upload(MultipartFile file) {
@@ -45,6 +47,7 @@ public class CommonController {
      *
      * @param url 被删除图片的网址
      */
+    @EmpLog
     @DeleteMapping
     @ApiOperation(value = "删除图片接口")
     public void delete(String url) {

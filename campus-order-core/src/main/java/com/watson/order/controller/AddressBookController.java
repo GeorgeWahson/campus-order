@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.AddressBookService;
+import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.AddressBook;
@@ -30,6 +31,7 @@ public class AddressBookController {
      * @param addressBook 包含信息的实体对象
      * @return 该对象的统一结果封装对象
      */
+    @UserLog
     @PostMapping
     @ApiOperation(value = "新增地址接口")
     public Result<AddressBook> save(@RequestBody AddressBook addressBook) {
@@ -45,6 +47,7 @@ public class AddressBookController {
      * @param addressBook 设置为默认地址的 地址对象
      * @return 该对象的统一结果封装对象
      */
+    @UserLog
     @PutMapping("default")
     @ApiOperation(value = "设置默认地址接口")
     public Result<AddressBook> setDefault(@RequestBody AddressBook addressBook) {
@@ -126,16 +129,13 @@ public class AddressBookController {
      * @param addressBook 修改后的地址对象
      * @return 操作结果信息
      */
+    @UserLog
     @PutMapping
     @ApiOperation(value = "更新地址接口")
     public Result<String> updateAddress(@RequestBody AddressBook addressBook) {
 
         log.info("update addressBook: {}", addressBook);
         boolean b = addressBookService.updateById(addressBook);
-
-//        boolean updated = addressBookService.lambdaUpdate()
-//                .eq(AddressBook::getId, addressBook.getId())
-//                .update(addressBook);
 
         return b ? Result.success("修改成功") : Result.error("修改失败");
     }

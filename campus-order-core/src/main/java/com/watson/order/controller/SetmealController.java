@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.SetmealService;
+import com.watson.order.aop.EmpLog;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.dto.SetmealDto;
@@ -34,6 +35,7 @@ public class SetmealController {
      * @param setmealDto 封装前端 套餐信息
      * @return 新增结果信息
      */
+    @EmpLog
     @PostMapping
     @ApiOperation(value = "新增套餐接口")
     public Result<String> save(@RequestBody SetmealDto setmealDto) {
@@ -71,6 +73,7 @@ public class SetmealController {
      * @param ids 套餐 id 集合
      * @return 操作结果信息
      */
+    @EmpLog
     @DeleteMapping
     @ApiOperation(value = "套餐删除接口")
     public Result<String> delete(@RequestParam List<Long> ids) {
@@ -103,7 +106,7 @@ public class SetmealController {
      * @return 套餐数据 的 统一结果封装对象
      */
     @GetMapping("/{id}")
-    @ApiOperation(value = "修改套餐接口")
+    @ApiOperation(value = "修改套餐时获取菜品信息接口")
     public Result<SetmealDto> get(@PathVariable Long id) {
         log.info("get id for update set_meal: {}", id);
         SetmealDto setmealDto = setmealService.getWithDish(id);
@@ -117,6 +120,7 @@ public class SetmealController {
      * @param setmealDto 前端传输的 套餐对象
      * @return 操作结果信息
      */
+    @EmpLog
     @PutMapping
     @ApiOperation(value = "更新套餐接口")
     public Result<String> update(@RequestBody SetmealDto setmealDto) {
@@ -134,6 +138,7 @@ public class SetmealController {
      * @param ids           需要转换的 id 集合
      * @return 操作结果信息
      */
+    @EmpLog
     @DeleteMapping("/status/{setmealStatus}")
     @ApiOperation(value = "修改套餐状态接口")
     @ApiImplicitParams({

@@ -1,6 +1,8 @@
 package com.watson.order.controller;
 
 import com.watson.order.OrderService;
+import com.watson.order.aop.EmpLog;
+import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.OrderDto;
 import com.watson.order.dto.PageBean;
@@ -32,6 +34,7 @@ public class OrderController {
      * @param orders 封装 订单信息【addressBookId，payMethod，remark】 实体类
      * @return 操作结果
      */
+    @UserLog
     @PostMapping("/submit")
     @ApiOperation(value = "用户下单接口")
     public Result<String> submit(@RequestBody Orders orders) {
@@ -75,6 +78,7 @@ public class OrderController {
      * @param orders 包含 id 和 修改后的状态值
      * @return 操作结果信息
      */
+    @EmpLog
     @PutMapping
     @ApiOperation(value = "修改订单状态接口")
     public Result<String> changeStatus(@RequestBody Orders orders) {

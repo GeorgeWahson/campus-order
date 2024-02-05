@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.CategoryService;
+import com.watson.order.aop.EmpLog;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Category;
@@ -29,6 +30,7 @@ public class CategoryController {
      * @param category 分类
      * @return 结果信息
      */
+    @EmpLog
     @PostMapping
     @ApiOperation(value = "新增分类接口")
     public Result<String> save(@RequestBody Category category) {
@@ -68,6 +70,7 @@ public class CategoryController {
      * @param id 分类id
      * @return 删除结果信息
      */
+    @EmpLog
     @DeleteMapping
     @ApiOperation(value = "删除分类接口")
     public Result<String> delete(@RequestParam("ids") Long id) {
@@ -85,6 +88,7 @@ public class CategoryController {
      * @param category 封装更新后的category对象
      * @return 更新结果信息
      */
+    @EmpLog
     @PutMapping
     @ApiOperation(value = "更新分类接口")
     public Result<String> update(@RequestBody Category category) {

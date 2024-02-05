@@ -1,6 +1,7 @@
 package com.watson.order.controller;
 
 import com.watson.order.EmployeeService;
+import com.watson.order.aop.EmpLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
@@ -32,6 +33,7 @@ public class EmployeeController {
      * @param employee 封装登录用户名及密码的用户对象
      * @return 根据用户名及密码查询的用户对象
      */
+    @EmpLog
     @PostMapping("/login")
     @ApiOperation(value = "登录接口")
     public Result<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
@@ -64,6 +66,7 @@ public class EmployeeController {
      * @param request 前端发出的登出请求
      * @return 登出结果信息
      */
+    @EmpLog
     @PostMapping("/logout")
     @ApiOperation(value = "登出接口")
     public Result<String> logout(HttpServletRequest request) {
@@ -79,6 +82,7 @@ public class EmployeeController {
      * @param employee 前端填写的用户信息
      * @return 新增结果信息
      */
+    @EmpLog
     @PostMapping
     @ApiOperation(value = "新增员工接口")
     public Result<String> save(@RequestBody Employee employee) {
@@ -127,6 +131,7 @@ public class EmployeeController {
      * @param employee 更新后的用户对象
      * @return 更新结果信息
      */
+    @EmpLog
     @PutMapping
     @ApiOperation(value = "更新员工接口")
     public Result<String> update(@RequestBody Employee employee) {
