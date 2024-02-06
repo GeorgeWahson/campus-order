@@ -36,13 +36,14 @@ public class WebConfig implements WebMvcConfigurer {
         //定义不需要处理的请求路径
         String[] urls = new String[]{
                 "/employee/login",
-                "/employee/logout",
+//                "/employee/logout",  // 拦截log, 将token中的id记录到日志
                 "/backend/**",
                 "/front/**",
                 "/common/**",
                 "/user/sendMsg",
                 "/user/login",
                 "/favicon.ico",
+                "/error",    // 不排除掉 /error, 会导致后端jwt解析失败
                 "/doc.html",   // 放行 api 文档页面
                 "/webjars/**",
                 "/swagger-resources",

@@ -2,10 +2,12 @@ package com.watson.order.controller;
 
 import com.watson.order.EmployeeService;
 import com.watson.order.aop.EmpLog;
+import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Employee;
+import com.watson.order.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +18,12 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -29,35 +37,20 @@ public class EmployeeController {
     /**
      * 员工登录
      *
-     * @param request  网页请求
      * @param employee 封装登录用户名及密码的用户对象
      * @return 根据用户名及密码查询的用户对象
      */
-    @EmpLog
     @PostMapping("/login")
     @ApiOperation(value = "登录接口")
-    public Result<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
+    public Result<String> login(@RequestBody Employee employee) {
 
-        log.info("in controller");
-        Employee loginUser = employeeService.login(employee);
-
-        log.info("service return login user: {}", loginUser);
-        // 如果没有查询到则返回登录失败结果
-        if (loginUser == null) {
-            // 用户不存在，或者密码错误
-            return Result.error("用户名或密码错误!!");
+        String ret = employeeService.login(employee);
+        // 长度小于15，说明不是token，登录失败
+        if (ret.length() < 15) {
+            return Result.error(ret);
         }
-
-        // 查看员工状态，如果为已禁用状态，则返回员工已禁用结果
-        if (loginUser.getStatus() == 0) {
-            return Result.error("账号已禁用!");
-        }
-
-        // 登录成功，将员工id存入Session并返回登录成功结果
-        // TODO JWT
-        request.getSession().setAttribute("employee", loginUser.getId());
-
-        return Result.success(loginUser);
+        // 登录成功，返回token
+        return Result.success(ret);
     }
 
     /**
@@ -66,13 +59,13 @@ public class EmployeeController {
      * @param request 前端发出的登出请求
      * @return 登出结果信息
      */
-    @EmpLog
     @PostMapping("/logout")
     @ApiOperation(value = "登出接口")
     public Result<String> logout(HttpServletRequest request) {
-        log.info("用户{}登出。", BaseContext.getCurrentId());
-        // 清除Session中保存的当前登录员工的id
-        request.getSession().removeAttribute("employee");
+
+        Long id = employeeService.logout(request);
+        log.info("用户id: {}登出。", id);
+
         return Result.success("退出成功！");
     }
 

@@ -133,7 +133,7 @@
         computed: {},
         created() {
             this.init()
-            this.user = JSON.parse(localStorage.getItem('userInfo')).username
+            this.user = JSON.parse(localStorage.getItem('userInfo')).username // 获取用户账号，用于判断是否为管理员
             var msg = localStorage.getItem('addOrUpdateMsg')
             if (msg) {
                 this.$message.success(msg)

@@ -4,16 +4,17 @@
     const service = axios.create({
         // axios中请求配置有baseURL选项，表示请求URL公共部分
         baseURL: '/',
-        // 超时
+        // 超时，调试用
+        // timeout: 10000
         timeout: 1000000
     })
     // request拦截器
     service.interceptors.request.use(config => {
         // 是否需要设置 token
-        // const isToken = (config.headers || {}).isToken === false
-        // if (getToken() && !isToken) {
-        //   config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-        // }
+        const isToken = (config.headers || {}).isToken === false
+        if (getToken() && !isToken) {
+            config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+        }
         // get请求映射params参数
         if (config.method === 'get' && config.params) {
             let url = config.url + '?';
@@ -70,3 +71,7 @@
     )
     win.$axios = service
 })(window);
+
+function getToken() {
+    return localStorage.getItem('userToken');
+}

@@ -124,7 +124,14 @@
                         this.loading = true
                         let res = await loginApi(this.loginForm)
                         if (String(res.code) === '1') {
-                            localStorage.setItem('userInfo', JSON.stringify(res.data))
+                            // 解析 jwt 中的载荷部分
+                            const payload = parseJwt(res.data);
+                            // 解析 后端用url编码的 用户名
+                            payload.name = window.decodeURI(payload.name)
+                            // 存入 localStorage，用于在 member/list.html 显示登录用户名
+                            localStorage.setItem('userInfo', JSON.stringify(payload))
+                            // console.log( atob(payload.name))
+                            localStorage.setItem('empToken', res.data)
                             window.location.href = '/backend/index.html'
                         } else {
                             this.$message.error(res.msg)

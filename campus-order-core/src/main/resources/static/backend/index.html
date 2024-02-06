@@ -82,6 +82,7 @@
                 </div>
                 <div class="right-menu">
                     <div class="avatar-wrapper">{{ userInfo.name }}</div>
+<!--                    <div class="avatar-wrapper">{{ loginUser }}</div>-->
                     <!-- <div class="logout" @click="logout">退出</div> -->
                     <img src="images/icons/btn_close@2x.png" class="outLogin" alt="退出" @click="logout"/>
                 </div>
@@ -119,6 +120,7 @@
                 defAct: '2',
                 menuActived: '2',
                 userInfo: {},
+                // loginUser: '',
                 menuList: [
                     // {
                     //   id: '1',
@@ -167,6 +169,9 @@
         computed: {},
         created() {
             const userInfo = window.localStorage.getItem('userInfo')
+            /*if (loginUser) {
+                this.loginUser = loginUser
+            }*/
             if (userInfo) {
                 this.userInfo = JSON.parse(userInfo)
             }
@@ -184,6 +189,7 @@
                 logoutApi().then((res) => {
                     if (res.code === 1) {
                         localStorage.removeItem('userInfo')
+                        localStorage.removeItem('empToken')
                         localStorage.setItem('returnMsg', res.data)
                         window.location.href = '/backend/page/login/login.html'
                     }

@@ -9,6 +9,7 @@ import com.watson.order.mapper.EmpOperateLogMapper;
 import com.watson.order.mapper.UserOperateLogMapper;
 import com.watson.order.po.Employee;
 import com.watson.order.po.User;
+import com.watson.order.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -73,8 +74,10 @@ public class LogAspect {
                 // 执行 @EmpLog 注解触发的操作
                 // 登录方法 操作人员id 在结果中获取
                 if ("login".equals(methodName)) {
-                    Result<Employee> emp = (Result<Employee>) result;
-                    operateUser = emp.getData().getId();
+                    String token = (String) result;
+                    operateUser = JwtUtils.getIdFromToken(token);
+                } else if ("logout".equals(methodName)) {  // 登出方法的返回值为 id
+                    operateUser = Long.valueOf(returnValue);
                 }
                 // 记录操作日志
                 EmpOperateLog empOperateLog = new EmpOperateLog(null, operateUser, operateTime, className, methodName, methodParams, returnValue, costTime);
@@ -84,9 +87,13 @@ public class LogAspect {
                 // 执行 @UserLog 注解触发的操作
                 // 登录方法 登录用户id 在结果中获取
                 if ("login".equals(methodName)) {
-                    Result<User> emp = (Result<User>) result;
-                    operateUser = emp.getData().getId();
-                } else if ("sendMsg".equals(methodName)) {  // 发送验证码时，用户未登录，此时操作人员id为空
+                    String token = (String) result;
+                    operateUser = JwtUtils.getIdFromToken(token);
+                } else if ("logout".equals(methodName)) {  // 登出方法的返回值为 id
+                    operateUser = Long.valueOf(returnValue);
+                } else if ("sendMsg".equals(methodName)) {
+                    // 由于是环绕通知，并且sendMsg方法不会被拦截而重新设置
+                    // BaseContext中的id，如果之前有人logout,此时操作人员id非空
                     operateUser = null;
                 }
                 // 记录操作日志

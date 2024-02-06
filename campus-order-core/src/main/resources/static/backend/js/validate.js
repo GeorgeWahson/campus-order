@@ -100,3 +100,26 @@ function validateRePassword(rule, value, callback) {
 
 }
 
+function parseJwt(token) {
+    if (!token) return null;
+
+    // 分割出 JWT 的三个部分
+    const parts = token.split('.');
+
+    // 验证是否至少有两部分（Header 和 Payload），Signature 可选
+    if (parts.length < 2) {
+        throw new Error('Invalid JWT token');
+    }
+
+    // 解码Payload部分（注意Base64URL编码与标准Base64略有不同）
+    const decodedPayload = atob(parts[1]); // 注意：浏览器环境中需要支持atob函数
+
+    // 将解码后的字符串转换为JSON对象
+    try {
+        // console.log(payload)
+        return JSON.parse(decodedPayload);
+    } catch (error) {
+        console.error('Failed to parse JWT payload', error);
+        return null;
+    }
+}

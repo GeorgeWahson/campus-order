@@ -72,44 +72,20 @@ public class UserController {
     /**
      * 移动端用户登录
      *
-     * @param map     包含 email 和 code
-     * @param session 前端会话请求
+     * @param map 包含 email 和 code
      * @return 登录结果
      */
-    @UserLog
     @PostMapping("/login")
     @ApiOperation(value = "用户登录接口")
-    public Result<User> login(@RequestBody Map<String, String> map, HttpSession session) {
+    public Result<String> login(@RequestBody Map<String, String> map) {
 
-        log.info("map: " + map.toString());
-
-        // 获取邮箱地址
-        String email = map.get("email");
-
-        // 获取验证码
-        String code = map.get("code");
-
-        // 从Session中获取保存的验证码
-        // Object codeInSession = session.getAttribute(email);
-
-        // 从redis中获取验证码
-        String codeInRedis = redisTemplate.opsForValue().get(email);
-
-        // 进行验证码的比对（页面提交的验证码和Session中保存的验证码比对成功）
-        if (codeInRedis != null && codeInRedis.equals(code)) {
-            // 如果能够比对成功，说明登录成功
-            // 查找或新建用户
-            User user = userService.login(email);
-
-            session.setAttribute("user", user.getId());
-
-            // 如果用户登录成功，直接删除缓存中的验证码
-            redisTemplate.delete(email);
-
-            BaseContext.setCurrentId(user.getId());
-            return Result.success(user);
+        String ret = userService.login(map);
+        // 长度小于15，说明不是token，登录失败
+        if (ret.length() < 15) {
+            return Result.error(ret);
         }
-        return Result.error("验证码错误，登录失败");
+        // 登录成功，返回token
+        return Result.success(ret);
     }
 
     /**
@@ -118,16 +94,15 @@ public class UserController {
      * @param request 前端发出的登出请求
      * @return 登出结果信息
      */
-    @UserLog
     @PostMapping("/logout")
     @ApiOperation(value = "用户登出接口")
     public Result<String> logout(HttpServletRequest request) {
-        log.info("用户{}登出。", BaseContext.getCurrentId());
-        // 清除Session中保存的当前登录员工的id
-        request.getSession().removeAttribute("user");
-        // 清除后端存储的用户id
-        BaseContext.clearCurrentId();
+
+        Long id = userService.logout(request);
+        log.info("用户id: {}登出。", id);
+
         return Result.success("退出成功！");
+
     }
 
 }
