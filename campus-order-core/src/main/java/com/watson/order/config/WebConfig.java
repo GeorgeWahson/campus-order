@@ -86,7 +86,7 @@ public class WebConfig implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("校园点餐")
-                .version("1.0")
+                .version("1.2")
                 .description("校园点餐接口文档")
                 .build();
     }
