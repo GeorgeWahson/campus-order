@@ -67,7 +67,7 @@ public class LogAspect {
             // 获取被拦截方法的Method对象
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
-            // 检查方法上是包含 @Log 或 @MyLog 注解
+            // 检查方法上是包含 @EmpLog 或 @UserLog 注解
             EmpLog empLogAnnotation = method.getAnnotation(EmpLog.class);
             UserLog userLogAnnotation = method.getAnnotation(UserLog.class);
             if (empLogAnnotation != null) {
@@ -102,7 +102,7 @@ public class LogAspect {
                 log.info("@UserLog 注解，AOP记录操作日志: {}", userOperateLog);
             } else {
                 // 如果没有找到这两个注解，可以抛出异常或者记录错误信息
-                throw new IllegalStateException("Expected either @Log or @MyLog on the intercepted method.");
+                throw new IllegalStateException("Expected either @EmpLog or @UserLog on the intercepted method.");
             }
             return result;
         } catch (Exception e) {
