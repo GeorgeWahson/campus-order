@@ -2,7 +2,6 @@ package com.watson.order.controller;
 
 import com.watson.order.UserService;
 import com.watson.order.aop.UserLog;
-import com.watson.order.common.BaseContext;
 import com.watson.order.dto.Result;
 import com.watson.order.po.User;
 import com.watson.order.utils.SendMailUtils;

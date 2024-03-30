@@ -2,12 +2,10 @@ package com.watson.order.controller;
 
 import com.watson.order.EmployeeService;
 import com.watson.order.aop.EmpLog;
-import com.watson.order.aop.UserLog;
 import com.watson.order.common.BaseContext;
 import com.watson.order.dto.PageBean;
 import com.watson.order.dto.Result;
 import com.watson.order.po.Employee;
-import com.watson.order.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,12 +16,6 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -65,6 +57,9 @@ public class EmployeeController {
 
         Long id = employeeService.logout(request);
         log.info("用户id: {}登出。", id);
+
+        // 清除 线程空间储存的 用户信息
+        BaseContext.clearCurrentId();
 
         return Result.success("退出成功！");
     }

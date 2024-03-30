@@ -3,7 +3,6 @@ package com.watson.order.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.watson.order.UserService;
 import com.watson.order.aop.UserLog;
-import com.watson.order.dto.Result;
 import com.watson.order.mapper.UserMapper;
 import com.watson.order.po.User;
 import com.watson.order.utils.JwtUtils;
@@ -13,9 +12,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 

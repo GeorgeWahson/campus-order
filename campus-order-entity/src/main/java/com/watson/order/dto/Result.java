@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 返回结果包装类

@@ -2,13 +2,10 @@ package com.watson.order.aop;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.watson.order.common.BaseContext;
-import com.watson.order.dto.Result;
 import com.watson.order.log.EmpOperateLog;
 import com.watson.order.log.UserOperateLog;
 import com.watson.order.mapper.EmpOperateLogMapper;
 import com.watson.order.mapper.UserOperateLogMapper;
-import com.watson.order.po.Employee;
-import com.watson.order.po.User;
 import com.watson.order.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

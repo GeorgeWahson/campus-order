@@ -12,17 +12,17 @@ public class BaseContext {
         ThreadLocal为每个线程提供单独一份存储空间，具有线程隔离的效果，
         只有在线程内才能获取到对应的值，线程外则不能访问。
      */
-    private static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Long> THREAD_LOCAL = new ThreadLocal<>();
 
     public static void setCurrentId(Long id) {
-        threadLocal.set(id);
+        THREAD_LOCAL.set(id);
     }
 
     public static Long getCurrentId() {
-        return threadLocal.get();
+        return THREAD_LOCAL.get();
     }
 
     public static void clearCurrentId() {
-        threadLocal.remove();
+        THREAD_LOCAL.remove();
     }
 }
